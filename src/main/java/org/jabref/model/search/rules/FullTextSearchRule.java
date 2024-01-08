@@ -10,6 +10,7 @@ import org.jabref.gui.Globals;
 import org.jabref.logic.pdf.search.PdfIndexer;
 import org.jabref.logic.pdf.search.PdfIndexerManager;
 import org.jabref.logic.pdf.search.PdfSearcher;
+import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.pdf.search.PdfSearchResults;
 import org.jabref.model.pdf.search.SearchResult;
@@ -43,7 +44,7 @@ public abstract class FullTextSearchRule implements SearchRule {
     }
 
     @Override
-    public PdfSearchResults getFulltextResults(String query, BibEntry bibEntry) {
+    public PdfSearchResults getFulltextResults(String query, BibEntry bibEntry, BibDatabaseContext bibDatabaseContext) {
         if (!searchFlags.contains(SearchRules.SearchFlags.FULLTEXT)) {
             LOGGER.debug("Fulltext search results called even though fulltext search flag is missing.");
             return new PdfSearchResults();
@@ -55,7 +56,7 @@ public abstract class FullTextSearchRule implements SearchRule {
             LOGGER.trace("Performing full query {}.", query);
             PdfIndexer pdfIndexer;
             try {
-                pdfIndexer = PdfIndexerManager.getIndexer(Globals.stateManager.getActiveDatabase().get(), Globals.prefs.getFilePreferences());
+                pdfIndexer = PdfIndexerManager.getIndexer(bibDatabaseContext, Globals.prefs.getFilePreferences());
             } catch (IOException e) {
                 LOGGER.error("Could not access full text index.", e);
                 return new PdfSearchResults();

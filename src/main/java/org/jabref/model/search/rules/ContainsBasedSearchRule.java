@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Locale;
 
 import org.jabref.architecture.AllowedToUseLogic;
+import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.Field;
 import org.jabref.model.search.rules.SearchRules.SearchFlags;
@@ -27,7 +28,17 @@ public class ContainsBasedSearchRule extends FullTextSearchRule {
     }
 
     @Override
+    public boolean validateSearchStrings(String query, BibDatabaseContext bibDatabaseContext) {
+        return true;
+    }
+
+    @Override
     public boolean applyRule(String query, BibEntry bibEntry) {
+        return applyRule(query, bibEntry, new BibDatabaseContext());
+    }
+
+    @Override
+    public boolean applyRule(String query, BibEntry bibEntry, BibDatabaseContext bibDatabaseContext) {
         String searchString = query;
         if (!searchFlags.contains(SearchRules.SearchFlags.CASE_SENSITIVE)) {
             searchString = searchString.toLowerCase(Locale.ROOT);
@@ -58,6 +69,7 @@ public class ContainsBasedSearchRule extends FullTextSearchRule {
             return false;
         }
 
-        return getFulltextResults(query, bibEntry).numSearchResults() > 0;
+        return getFulltextResults(query, bibEntry, bibDatabaseContext).numSearchResults() > 0;
     }
+
 }

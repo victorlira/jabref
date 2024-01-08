@@ -7,6 +7,7 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import org.jabref.architecture.AllowedToUseLogic;
+import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.Field;
 import org.jabref.model.search.rules.SearchRules.SearchFlags;
@@ -38,7 +39,17 @@ public class RegexBasedSearchRule extends FullTextSearchRule {
     }
 
     @Override
+    public boolean validateSearchStrings(String query, BibDatabaseContext bibDatabaseContext) {
+        return validateSearchStrings(query, new BibDatabaseContext());
+    }
+
+    @Override
     public boolean applyRule(String query, BibEntry bibEntry) {
+        return applyRule(query, bibEntry, new BibDatabaseContext());
+    }
+
+    @Override
+    public boolean applyRule(String query, BibEntry bibEntry, BibDatabaseContext bibDatabaseContext) {
         Pattern pattern;
         try {
             pattern = Pattern.compile(StringUtil.stripAccents(query), searchFlags.contains(SearchRules.SearchFlags.CASE_SENSITIVE) ? 0 : Pattern.CASE_INSENSITIVE);
@@ -57,6 +68,6 @@ public class RegexBasedSearchRule extends FullTextSearchRule {
                 }
             }
         }
-        return getFulltextResults(query, bibEntry).numSearchResults() > 0;
+        return getFulltextResults(query, bibEntry, bibDatabaseContext).numSearchResults() > 0;
     }
 }

@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jabref.logic.l10n.Localization;
+import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.search.SearchMatcher;
 import org.jabref.model.search.rules.ContainsBasedSearchRule;
@@ -61,10 +62,17 @@ public class SearchQuery implements SearchMatcher {
     private EnumSet<SearchRules.SearchFlags> searchFlags;
     private final SearchRule rule;
 
-    public SearchQuery(String query, EnumSet<SearchRules.SearchFlags> searchFlags) {
+    private final  BibDatabaseContext bibDatabaseContext;
+
+    public SearchQuery(String query, EnumSet<SearchRules.SearchFlags> searchFlags, BibDatabaseContext bibDatabaseContext) {
         this.query = Objects.requireNonNull(query);
         this.searchFlags = searchFlags;
         this.rule = SearchRules.getSearchRuleByQuery(query, searchFlags);
+        this.bibDatabaseContext = bibDatabaseContext;
+    }
+
+    public SearchQuery(String query, EnumSet<SearchRules.SearchFlags> searchFlags) {
+        this(query, searchFlags, new BibDatabaseContext());
     }
 
     @Override
@@ -74,11 +82,11 @@ public class SearchQuery implements SearchMatcher {
 
     @Override
     public boolean isMatch(BibEntry entry) {
-        return rule.applyRule(getQuery(), entry);
+        return rule.applyRule(getQuery(), entry, bibDatabaseContext);
     }
 
     public boolean isValid() {
-        return rule.validateSearchStrings(getQuery());
+        return rule.validateSearchStrings(getQuery(), bibDatabaseContext);
     }
 
     public boolean isContainsBasedSearch() {

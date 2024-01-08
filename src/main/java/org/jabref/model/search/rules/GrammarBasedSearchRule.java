@@ -85,7 +85,7 @@ public class GrammarBasedSearchRule implements SearchRule {
         return this.query;
     }
 
-    private void init(String query) throws ParseCancellationException {
+    private void init(String query, BibDatabaseContext context) throws ParseCancellationException {
         if (Objects.equals(this.query, query)) {
             return;
         }
@@ -106,7 +106,6 @@ public class GrammarBasedSearchRule implements SearchRule {
         }
         try {
             LOGGER.trace("Calling PDFIndexer");
-            BibDatabaseContext context = Globals.stateManager.getActiveDatabase().orElse(null);
             if (context == null) {
                 LOGGER.warn("No active library");
                 return;
@@ -122,23 +121,33 @@ public class GrammarBasedSearchRule implements SearchRule {
 
     @Override
     public boolean applyRule(String query, BibEntry bibEntry) {
+        return applyRule(query, bibEntry, new BibDatabaseContext());
+    }
+
+    @Override
+    public boolean applyRule(String query, BibEntry bibEntry, BibDatabaseContext bibDatabaseContext) {
         try {
             return new BibtexSearchVisitor(searchFlags, bibEntry).visit(tree);
         } catch (Exception e) {
             LOGGER.debug("Search failed", e);
-            return getFulltextResults(query, bibEntry).numSearchResults() > 0;
+            return getFulltextResults(query, bibEntry, bibDatabaseContext).numSearchResults() > 0;
         }
     }
 
     @Override
-    public PdfSearchResults getFulltextResults(String query, BibEntry bibEntry) {
+    public PdfSearchResults getFulltextResults(String query, BibEntry bibEntry, BibDatabaseContext bibDatabaseContext) {
         return new PdfSearchResults(searchResults.stream().filter(searchResult -> searchResult.isResultFor(bibEntry)).collect(Collectors.toList()));
     }
 
     @Override
     public boolean validateSearchStrings(String query) {
+        return validateSearchStrings(query, new BibDatabaseContext());
+    }
+
+    @Override
+    public boolean validateSearchStrings(String query, BibDatabaseContext bibDatabaseContext) {
         try {
-            init(query);
+            init(query, bibDatabaseContext);
             return true;
         } catch (ParseCancellationException e) {
             LOGGER.debug("Search query invalid", e);

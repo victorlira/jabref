@@ -4,6 +4,7 @@ import java.util.EnumSet;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
+import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.StandardField;
 import org.jabref.model.entry.types.StandardEntryType;
@@ -20,8 +21,8 @@ public class SearchQueryTest {
 
     @Test
     public void testToString() {
-        assertEquals("\"asdf\" (case sensitive, regular expression) [CASE_SENSITIVE, REGULAR_EXPRESSION]", new SearchQuery("asdf", EnumSet.of(SearchRules.SearchFlags.CASE_SENSITIVE, SearchRules.SearchFlags.REGULAR_EXPRESSION)).toString());
-        assertEquals("\"asdf\" (case insensitive, plain text) []", new SearchQuery("asdf", EnumSet.noneOf(SearchFlags.class)).toString());
+        assertEquals("\"asdf\" (case sensitive, regular expression) [CASE_SENSITIVE, REGULAR_EXPRESSION]", new SearchQuery("asdf", EnumSet.of(SearchRules.SearchFlags.CASE_SENSITIVE, SearchRules.SearchFlags.REGULAR_EXPRESSION), new BibDatabaseContext()).toString());
+        assertEquals("\"asdf\" (case insensitive, plain text) []", new SearchQuery("asdf", EnumSet.noneOf(SearchFlags.class) ).toString());
     }
 
     @Test

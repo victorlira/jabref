@@ -444,7 +444,7 @@ public class ArgumentProcessor {
         BibDatabase dataBase = pr.getDatabase();
 
         SearchPreferences searchPreferences = preferencesService.getSearchPreferences();
-        SearchQuery query = new SearchQuery(searchTerm, searchPreferences.getSearchFlags());
+        SearchQuery query = new SearchQuery(searchTerm, searchPreferences.getSearchFlags(), databaseContext);
         List<BibEntry> matches = new DatabaseSearcher(query, dataBase).getMatches();
 
         // export matches

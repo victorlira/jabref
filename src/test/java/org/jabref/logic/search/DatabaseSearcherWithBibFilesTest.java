@@ -164,7 +164,8 @@ public class DatabaseSearcherWithBibFilesTest {
     @MethodSource
     public void searchLibrary(List<BibEntry> expected, String testFile, String query, EnumSet<SearchRules.SearchFlags> searchFlags) throws Exception {
         BibDatabase database = initializeDatabaseFromPath(testFile);
-        List<BibEntry> matches = new DatabaseSearcher(new SearchQuery(query, searchFlags), database).getMatches();
+        BibDatabaseContext context = new BibDatabaseContext(database);
+        List<BibEntry> matches = new DatabaseSearcher(new SearchQuery(query, searchFlags, context), database).getMatches();
         assertEquals(expected, matches);
     }
 }

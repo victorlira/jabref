@@ -90,7 +90,7 @@ public class FulltextSearchResultsTab extends EntryEditorTab {
             documentViewerView = new DocumentViewerView();
         }
         this.entry = entry;
-        PdfSearchResults searchResults = stateManager.activeSearchQueryProperty().get().get().getRule().getFulltextResults(stateManager.activeSearchQueryProperty().get().get().getQuery(), entry);
+        PdfSearchResults searchResults = stateManager.activeSearchQueryProperty().get().get().getRule().getFulltextResults(stateManager.activeSearchQueryProperty().get().get().getQuery(), entry, stateManager.getActiveDatabase().get());
 
         content.getChildren().clear();
 
